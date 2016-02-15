@@ -29,10 +29,10 @@
   become: true
   become_user: "{{ gitolite_user_name }}"
   register: gitolite_install_gitolite_ssh_user_accounts
-  with_items: gitolite_accounts_ssh
+  with_fileglob: files/gitolite/users/ssh/*.pub
   copy:
-    src: files/gitolite/users/ssh/{{ item }}.pub
-    dest: "{{ gitolite_user_home }}/gitolite-admin/keydir/{{ item }}.pub"
+    src: "{{ item }}"
+    dest: "{{ gitolite_user_home }}/gitolite-admin/keydir/{{ item|basename }}"
     mode: 0640
     owner: "{{ gitolite_user_name }}"
     group: "{{ gitolite_user_group }}"
