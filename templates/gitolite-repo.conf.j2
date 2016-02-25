@@ -1,12 +1,3 @@
-#   ____________________
-#  < Managed by Ansible >
-#   --------------------
-#          \   ^__^
-#           \  (oo)\_______
-#              (__)\       )\/\
-#                  ||----w |
-#                  ||     ||
-#
 {% macro gitolite_repo(r) -%}
 repo {{ r.repo }}
 {% if 'admin' in r and r['admin']|count > 0 -%}
@@ -45,24 +36,4 @@ repo {{ r.repo }}
 {%- endif %}
 {%- endmacro %}
 
-{% macro iter_repos(repositories) -%}
-{% for repo in repositories -%}
-{% for ace in ('admin', 'write', 'read') -%}
-{% if ace in repo -%}
-{% for arg in ('options', 'users') -%}
-{% if arg in repo[ace] -%}
-{% set create_repo = true -%}
-{%- endif %}
-{%- endfor %}
-{%- endif %}
-{%- endfor %}
-{% if create_repo -%}
-{{ gitolite_repo(repo) }}
-{%- endif %}
-{%- endfor %}
-{%- endmacro %}
-
-# Default repositories
-{{ iter_repos(gitolite_repositories) }}
-# Custom repositories
-include "repos/*.conf"
+{{ gitolite_repo(item) }}

@@ -23,6 +23,27 @@
     owner: "{{ gitolite_user_name }}"
     group: "{{ gitolite_user_group }}"
 
+- name: Ensure repo config dir
+  file:
+    path: "{{ gitolite_user_home }}/gitolite-admin/conf/repos/"
+    state: directory
+    owner: "{{ gitolite_user_name }}"
+    group: "{{ gitolite_user_group }}"
+    mode: "ug=rwX,o=rX"
+
+- name: Install repo specific confs
+  tags: gitolite
+  with_items: gitolite_repositories_custom
+  become: true
+  become_user: "{{ gitolite_user_name }}"
+  register: gitolite_install_gitolite_conf_custom
+  template:
+    src: gitolite-repo.conf.j2
+    dest: "{{ gitolite_user_home }}/gitolite-admin/conf/repos/{{ item.repo }}.conf"
+    mode: 0640
+    owner: "{{ gitolite_user_name }}"
+    group: "{{ gitolite_user_group }}"
+
 # Install gitolite user accounts for git+ssh
 - name: Install gitolite SSH user accounts
   tags: gitolite
@@ -44,7 +65,7 @@
   tags: gitolite
   become: true
   become_user: "{{ gitolite_user_name }}"
-  when: gitolite_install_gitolite_conf.changed or gitolite_install_gitolite_ssh_user_accounts.changed
+  when: gitolite_install_gitolite_conf.changed or gitolite_install_gitolite_conf_custom.changed or gitolite_install_gitolite_ssh_user_accounts.changed
   register: gitolite_git_add_gitolite_admin
   command: git add --all
   args:
