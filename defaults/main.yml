@@ -121,6 +121,8 @@ gitolite_repositories_custom: []
 #   pattern.
 gitolite_accounts_ssh: []
 
+gitolite_pubkey_glob: "{{ playbook_dir }}/files/gitolite/users/ssh/*.pub"
+
 # gitolite mirroring
 gitolite_mirroring_peers: []
 

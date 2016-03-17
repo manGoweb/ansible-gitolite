@@ -50,7 +50,7 @@
   become: true
   become_user: "{{ gitolite_user_name }}"
   register: gitolite_install_gitolite_ssh_user_accounts
-  with_fileglob: "{{ playbook_dir }}/files/gitolite/users/ssh/*.pub"
+  with_fileglob: "{{ gitolite_pubkey_glob }}"
   copy:
     src: "{{ item }}"
     dest: "{{ gitolite_user_home }}/gitolite-admin/keydir/{{ item|basename }}"
